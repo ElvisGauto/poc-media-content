@@ -1,0 +1,13 @@
+<div class="home">
+    <div>
+        <button id="recording">Grabar</button>
+        <button id="stopRecording">Parar</button>
+        <button id="playRecord">Reproducir</button>
+        <button (click)="deleteAudio()">Borrar</button>
+    </div>
+    <audio controls #audio>
+        <source src="" #audSrc/>
+        <!-- id="src"  -->
+    </audio>
+    <input type="file" (change)="audFileSelected($event)">
+</div>
