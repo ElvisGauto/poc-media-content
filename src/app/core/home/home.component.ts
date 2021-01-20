@@ -13,8 +13,11 @@ export class HomeComponent implements OnInit {
   @ViewChild('audio', { static: true }) audio: ElementRef;
   @ViewChild('inputFile', { static: true }) inputFile: ElementRef;
   @ViewChild('audSrc', { static: true }) audSrc: ElementRef;
+  URL = window.URL || (window as any).webkitURL;
 
-
+  input: any;
+  rec: any;
+  gumStream: any;
 
   recording = false;
   playAudio = false;
@@ -29,14 +32,14 @@ export class HomeComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    window.URL = window.URL || (window as any).webkitURL; 
+    // window.URL = window.URL || (window as any).webkitURL; 
     // navigator.getUserMedia  = navigator.getUserMedia || (navigator as any).webkitGetUserMedia || (navigator as any).mozGetUserMedia || (navigator as any).msGetUserMedia;
     // navigator.getUserMedia({ audio: true }, this.startRecording, this.onFail);
 
-    navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(stream => {
-      this.mediaRecorder = new MediaRecorder(stream);
-    });
+    // navigator.mediaDevices.getUserMedia({ audio: true })
+    // .then(stream => {
+    //   this.mediaRecorder = new MediaRecorder(stream);
+    // });
   }
 
   onFail(): any {
@@ -44,37 +47,37 @@ export class HomeComponent implements OnInit {
   }
 
   startRecording(): any {
-    this.deleteAudio();
-    this.btnRecording = false;
-    this.btnStopRecording = true;
-    this.mediaRecorder.start();
-    this.mediaRecorder.addEventListener("dataavailable", event => {
-      this.audioChunks = [];
-      this.audioChunks.push(event.data);
+    navigator.mediaDevices.getUserMedia({ audio: true, video:false })
+    .then((stream) => {
+      console.log(stream);
+      let AudioContext = (window as any).AudioContext || (window as any).webkitAudioContext;
+      let audioContext = new AudioContext();
+      this.input = audioContext.createMediaStreamSource(stream);
+
+      this.gumStream = stream;
+
+      this.rec = new (window as any).Recorder(this.input, { numChannels: 1 })
+      this.rec.record();
+    })
+    .catch((err) => {
+      alert(err);
     });
   }
   
   stopAudio(): void {
-    // debugger;
-    this.mediaRecorder.stop();
-    setTimeout(() => {
-      this.addToAudioTag();
-    }, 1000)
-    this.btnStopRecording = false;
-    this.btnRecording = true;
+    console.log(this.rec);
+    this.rec.stop();
+    this.rec.exportWAV((data) => {
+      const audio = document.getElementById('audio');
+      audio.setAttribute('src', this.URL.createObjectURL(data));
+    });
   }
   
-  addToAudioTag(): void {
-    // debugger;
-    const i = this.audioChunks.length;
-    console.log(this.audioChunks);
-    const audioBlob = new Blob(this.audioChunks);
-    const audioUrlRecording = window.URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrlRecording);
-
-    this.audSrc.nativeElement.setAttribute('src', audio.src);
-    this.audio.nativeElement.load();
-  }
+  // addToAudioTag(blob): void {
+  //   let url = URL.createObjectURL(blob);
+  //   const audio = document.getElementById('audio');
+  //   audio.setAttribute('src', url);
+  // }
 
   deleteAudio(): void {
     this.audioChunks = [];
@@ -83,10 +86,10 @@ export class HomeComponent implements OnInit {
     this.audio.nativeElement.load();
   }
 
-  audFileSelected(event:  any): void {
-    let files = event.target.files;
-    this.audioChunks.push(files[0]);
-    this.addToAudioTag();
-  }
+  // audFileSelected(event:  any): void {
+  //   let files = event.target.files;
+  //   this.audioChunks.push(files[0]);
+  //   this.addToAudioTag();
+  // }
 
 }

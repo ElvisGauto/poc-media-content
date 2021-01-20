@@ -1,12 +1,10 @@
 <div class="home">
     <div>
-        <button (click)="startRecording()" *ngIf="btnRecording">Grabar</button>
-        <button (click)="stopAudio()"  *ngIf="btnStopRecording">Parar</button>
+        <button (click)="startRecording()">Grabar</button>
+        <button (click)="stopAudio()">Parar</button>
         <button (click)="deleteAudio()">Borrar</button>
     </div>
-    <audio controls autoplay #audio>
-        <source src="" #audSrc/>
-        <!-- id="src"  -->
+    <audio controls autoplay id="audio">
     </audio>
-    <input type="file" #inputFile  (change)="audFileSelected($event)">
+    <!-- <input type="file" #inputFile  (change)="audFileSelected($event)"> -->
 </div>
