@@ -25,18 +25,22 @@ export class HomeComponent implements OnInit {
   audioUrlRecording: any;
   audioBlob: any;
   mediaRecorder: any;
+  context: any;
+  recorder: any;
+  tracks: any;
 
   constructor() { }
 
   ngOnInit() {
-    window.URL = window.URL || (window as any).webkitURL; 
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
     // navigator.getUserMedia  = navigator.getUserMedia || (navigator as any).webkitGetUserMedia || (navigator as any).mozGetUserMedia || (navigator as any).msGetUserMedia;
     // navigator.getUserMedia({ audio: true }, this.startRecording, this.onFail);
 
-    navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(stream => {
-      this.mediaRecorder = new MediaRecorder(stream);
-    });
+    // navigator.mediaDevices.getUserMedia({ audio: true })
+    // .then(stream => {
+    //   this.mediaRecorder = new MediaRecorder(stream);
+    // });
   }
 
   onFail(): any {
@@ -44,24 +48,33 @@ export class HomeComponent implements OnInit {
   }
 
   startRecording(): any {
-    this.deleteAudio();
     this.btnRecording = false;
     this.btnStopRecording = true;
-    this.mediaRecorder.start();
-    this.mediaRecorder.addEventListener("dataavailable", event => {
-      this.audioChunks = [];
-      this.audioChunks.push(event.data);
-    });
+  
+    const onSuccess = (stream) => {
+      // this.mediaRecorder = new MediaRecorder(stream);
+      this.tracks = stream.getTracks();
+			this.context = new AudioContext();
+			let mediaStreamSource = this.context.createMediaStreamSource(stream);
+			this.recorder = new window.Recorder(mediaStreamSource);
+			this.recorder.record();
+    }
+    const onFail = (err) => {
+      console.log(err);
+    }
+    navigator.getUserMedia({audio: true}, onSuccess, onFail); 
   }
   
   stopAudio(): void {
-    // debugger;
-    this.mediaRecorder.stop();
-    setTimeout(() => {
-      this.addToAudioTag();
-    }, 1000)
-    this.btnStopRecording = false;
     this.btnRecording = true;
+    this.btnStopRecording = false;
+
+    this.recorder.stop();
+    this.tracks.forEach(track => track.stop());
+    this.recorder.exportWAV((s) => {
+      this.audSrc.nativeElement.setAttribute('src', window.URL.createObjectURL(s));
+      this.audio.nativeElement.load();
+    });
   }
   
   addToAudioTag(): void {

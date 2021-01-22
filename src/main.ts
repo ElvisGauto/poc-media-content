@@ -10,3 +10,17 @@ if (environment.production) {
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
+
+  declare global {
+    interface Window { 
+      Recorder: any;
+      webkitAudioContext: any;
+      AudioContext: any;
+    }
+
+    interface Navigator {
+      webkitGetUserMedia: any;
+      msGetUserMedia: any;
+      mozGetUserMedia: any;
+    }
+  }
