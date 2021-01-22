@@ -1,12 +1,17 @@
 <div class="home">
-    <div>
+    <div class="home__text">
+        <h1>PRUEBA DE CONCEPTO</h1>
+        <p>Grabar audio o subir seleccionando desde una carpeta</p>
+    </div>
+    <div class="home__buttons">
         <button (click)="startRecording()" *ngIf="btnRecording">Grabar</button>
         <button (click)="stopAudio()"  *ngIf="btnStopRecording">Parar</button>
         <button (click)="deleteAudio()">Borrar</button>
     </div>
+    <input class="home__input-file"
+    type="file" #inputFile  (change)="audFileSelected($event)">
     <audio controls autoplay #audio>
         <source src="" #audSrc/>
         <!-- id="src"  -->
     </audio>
-    <input type="file" #inputFile  (change)="audFileSelected($event)">
 </div>

@@ -66,12 +66,9 @@ export class HomeComponent implements OnInit {
   
   addToAudioTag(): void {
     // debugger;
-    const i = this.audioChunks.length;
-    console.log(this.audioChunks);
     const audioBlob = new Blob(this.audioChunks);
     const audioUrlRecording = window.URL.createObjectURL(audioBlob);
     const audio = new Audio(audioUrlRecording);
-
     this.audSrc.nativeElement.setAttribute('src', audio.src);
     this.audio.nativeElement.load();
   }
