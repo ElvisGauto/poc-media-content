@@ -50,7 +50,6 @@ export class HomeComponent implements OnInit {
   startRecording(): any {
     this.btnRecording = false;
     this.btnStopRecording = true;
-  
     const onSuccess = (stream) => {
       // this.mediaRecorder = new MediaRecorder(stream);
       this.tracks = stream.getTracks();
