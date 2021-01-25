@@ -48,32 +48,40 @@ export class HomeComponent implements OnInit {
   }
 
   startRecording(): any {
-    this.btnRecording = false;
-    this.btnStopRecording = true;
-    const onSuccess = (stream) => {
-      // this.mediaRecorder = new MediaRecorder(stream);
+    debugger;
+    navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+      this.btnRecording = false;
+      this.btnStopRecording = true;
+
       this.tracks = stream.getTracks();
 			this.context = new AudioContext();
 			let mediaStreamSource = this.context.createMediaStreamSource(stream);
 			this.recorder = new window.Recorder(mediaStreamSource);
 			this.recorder.record();
-    }
-    const onFail = (err) => {
-      console.log(err);
-    }
-    navigator.getUserMedia({audio: true}, onSuccess, onFail); 
+    })
+    .catch(err => {
+      console.log('please, accept')
+    });
   }
   
   stopAudio(): void {
+    debugger;
+    URL = window.URL || window.webkitURL;
     this.btnRecording = true;
     this.btnStopRecording = false;
-
     this.recorder.stop();
     this.tracks.forEach(track => track.stop());
-    this.recorder.exportWAV((s) => {
-      this.audSrc.nativeElement.setAttribute('src', window.URL.createObjectURL(s));
-      this.audio.nativeElement.load();
-    });
+    
+    const aud = document.querySelector('audio');
+    
+    const addAudioToSrc = (blob) => {
+      let url = URL.createObjectURL(blob);
+      aud.controls = true;
+	    aud.src = url;
+    }
+    
+    this.recorder.exportWAV(addAudioToSrc);
   }
   
   addToAudioTag(): void {

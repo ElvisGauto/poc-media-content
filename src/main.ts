@@ -16,6 +16,7 @@ platformBrowserDynamic().bootstrapModule(AppModule)
       Recorder: any;
       webkitAudioContext: any;
       AudioContext: any;
+      webkitURL: any;
     }
 
     interface Navigator {
