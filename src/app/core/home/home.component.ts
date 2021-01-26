@@ -48,7 +48,7 @@ export class HomeComponent implements OnInit {
   }
 
   startRecording(): any {
-    debugger;
+    this.deleteAudio();
     navigator.mediaDevices.getUserMedia({ audio: true })
     .then(stream => {
       this.btnRecording = false;
@@ -58,7 +58,10 @@ export class HomeComponent implements OnInit {
 			this.context = new AudioContext();
 			let mediaStreamSource = this.context.createMediaStreamSource(stream);
 			this.recorder = new window.Recorder(mediaStreamSource);
-			this.recorder.record();
+      this.recorder.record();
+      setTimeout(() => {
+        this.stopAudio();
+      }, 5000)
     })
     .catch(err => {
       console.log('please, accept')
@@ -66,7 +69,6 @@ export class HomeComponent implements OnInit {
   }
   
   stopAudio(): void {
-    debugger;
     URL = window.URL || window.webkitURL;
     this.btnRecording = true;
     this.btnStopRecording = false;
@@ -83,27 +85,33 @@ export class HomeComponent implements OnInit {
     
     this.recorder.exportWAV(addAudioToSrc);
   }
-  
-  addToAudioTag(): void {
-    // debugger;
-    const audioBlob = new Blob(this.audioChunks);
-    const audioUrlRecording = window.URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrlRecording);
-    this.audSrc.nativeElement.setAttribute('src', audio.src);
-    this.audio.nativeElement.load();
-  }
 
   deleteAudio(): void {
     this.audioChunks = [];
     this.inputFile.nativeElement.value = null;
+    const aud = document.querySelector('audio');
+    aud.src = '';
+
     this.audSrc.nativeElement.setAttribute('src', '');
     this.audio.nativeElement.load();
   }
 
   audFileSelected(event:  any): void {
     let files = event.target.files;
-    this.audioChunks.push(files[0]);
-    this.addToAudioTag();
+
+    if (files[0].size <= 11775) {
+      this.audioChunks.push(files[0]);
+  
+      const audioBlob = new Blob(this.audioChunks);
+      const audioUrlRecording = window.URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrlRecording);
+      const audioTag = document.querySelector('audio');
+  
+      audioTag.src = audio.src;
+    } else {
+      this.inputFile.nativeElement.value = null;
+      alert('El archivo es muy grande');
+    }
   }
 
 }
