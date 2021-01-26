@@ -125,6 +125,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "poc-mediaContent"
+    }
+  },
+  "defaultProject": "poc-mediaContent",
+  "cli": {
+    "analytics": "4ec95620-b178-4f13-83b8-51388e279fe0"
+  }
 }
