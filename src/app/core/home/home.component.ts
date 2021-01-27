@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, ElementRef, OnChanges, Renderer2, ViewChild } from '@angular/core';
+import { ElementRef, ViewChild } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-declare var MediaRecorder: any;
 
 @Component({
   selector: 'app-home',
@@ -34,13 +33,6 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 		navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-    // navigator.getUserMedia  = navigator.getUserMedia || (navigator as any).webkitGetUserMedia || (navigator as any).mozGetUserMedia || (navigator as any).msGetUserMedia;
-    // navigator.getUserMedia({ audio: true }, this.startRecording, this.onFail);
-
-    // navigator.mediaDevices.getUserMedia({ audio: true })
-    // .then(stream => {
-    //   this.mediaRecorder = new MediaRecorder(stream);
-    // });
   }
 
   onFail(): any {
